@@ -1,0 +1,24 @@
+{
+  "name": "filtrate",
+  "version": "0.0.0",
+  "description": "Function argument type checking via filter functions",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://jpillora@github.com/jpillora/filtrate.git"
+  },
+  "keywords": [
+    "type"
+  ],
+  "author": "Jaime Pillora",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "~1.1.1"
+  }
+}
