@@ -82,20 +82,37 @@ returns *true* or *false*
 
 The pattern object can be recursively defined as:
 
-`pattern` =
-  `true`        
-  `false`       
-  `String`       
-  `Boolean`             
-  `Function`                   
-  `Array`                      
-  `Object`                     
-  [`pattern`, ...]             
-  {key: `pattern`, ... }
+```
+  pattern =
+    true        
+    false       
+    String       
+    Boolean             
+    Function                   
+    Array                      
+    Object                     
+    [pattern, ...]             
+    {key: pattern, ... }
+```
 
 `true` is a truthy comparison
 
 `false` is a falsy comparison
+
+`String`
+       
+`Boolean`
+             
+`Function`
+                   
+`Array`
+                      
+`Object` are all essentially `typeof` comparisons
+
+`[]` does a recursive comparison of these types listed
+
+`{}` does a recursive comparison of these types listed (also matches key names)
+
 
 
 
