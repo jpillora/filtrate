@@ -1,20 +1,22 @@
 var filtrate = require('../');
 
+//method usage
 var foo = {
-    fn: function() { console.log(arguments); }
+    fn: function() { console.log('foo', arguments); }
 };
 
-filtrate.method(foo, 'fn', [Number, Boolean]);
+filtrate(foo, 'fn', [Number, Boolean]);
 
-console.log("test filtrate.method")
-foo.fn(42, true);
-// foo.fn(21, {});
+foo.fn(42, true);     // executes foo.fn
+foo.fn(42, 'string'); // throws
 
+//function usage
+var bar = filtrate.fn(
+  function() {
+    console.log('bar', arguments);
+  },
+  [Number, {}, String]
+);
 
-
-console.log("test filtrate.fn")
-var bar = function() { console.log(arguments); };
-
-bar = filtrate.fn(bar, [Number, Object, String]);
-
-bar(21, false, "Test");
+bar(21, {a: 42}, "Test"); // executes foo.fn
+bar(21, [a, 42], "Test"); // throws

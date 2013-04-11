@@ -1,13 +1,13 @@
 {
   "name": "filtrate",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Function argument type checking via filter functions",
   "main": "index.js",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "~1.1.1"
+  },
+  "devDependencies": {
+    "mocha": "~1.9.0"
   }
 }
