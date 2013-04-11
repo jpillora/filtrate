@@ -7,6 +7,8 @@ Function argument type checking for Node.js
 
 ### Method Usage
 
+Adds a filter function in-place
+
 ``` js
 var foo = {
   fn: function() { 
@@ -21,6 +23,8 @@ foo.fn(42, 'string'); // throws
 ```
 
 ### Function Usage
+
+Returns a filter function
 
 ``` js
 var bar = filtrate.fn(
@@ -59,7 +63,7 @@ filtrate.compare(
 
 `patterns` (`Patterns Object`) - Patterns to match against (see below)
 
-returns *undefined*
+returns *`undefined`*
 
 #### filtrate(`function`, `patterns`);
 
@@ -71,6 +75,8 @@ returns *filtered function*
 
 #### filtrate.compare(`input`, `patterns`);
 
+Pattern match, boolean result
+
 `input` (`Function`) - An object to match
 
 `patterns` (`Patterns Object`) - Patterns to match against (see below)
@@ -80,32 +86,32 @@ returns *true* or *false*
 
 ### Patterns Object
 
-The pattern object can be recursively defined as:
+The patterns object can be recursively defined as:
 
 ```
-  pattern =
-    true        
-    false       
-    String       
-    Boolean             
-    Function                   
-    Array                      
-    Object                     
-    [pattern, ...]             
-    {key: pattern, ... }
+  patterns =
+    true      ||      
+    false     ||    
+    String    ||    
+    Boolean   ||          
+    Function  ||                
+    Array     ||               
+    Object    ||               
+    [patterns, ...] ||             
+    {key: patterns, ... }
 ```
 
 `true` is a truthy comparison
 
 `false` is a falsy comparison
 
-`String`
+`String` and
        
-`Boolean`
+`Boolean` and
              
-`Function`
+`Function` and
                    
-`Array`
+`Array` and
                       
 `Object` are all essentially `typeof` comparisons
 
