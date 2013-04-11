@@ -92,7 +92,8 @@ The patterns object can be recursively defined as:
   patterns =
     true      ||      
     false     ||    
-    String    ||    
+    String    ||
+    Number    ||
     Boolean   ||          
     Function  ||                
     Array     ||               
@@ -106,6 +107,8 @@ The patterns object can be recursively defined as:
 `false` is a falsy comparison
 
 `String` and
+
+`Number` and
        
 `Boolean` and
              
