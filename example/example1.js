@@ -2,21 +2,38 @@ var filtrate = require('../');
 
 //method usage
 var foo = {
-    fn: function() { console.log('foo', arguments); }
+  baz: function(num, bool) {
+    console.log('foo.baz', num, bool);
+  }
 };
 
-filtrate(foo, 'fn', [Number, Boolean]);
+filtrate(foo, 'baz', [Number, Boolean]);
 
-foo.fn(42, true);     // executes foo.fn
-foo.fn(42, 'string'); // throws
+foo.baz(42, true);     // executes foo.baz
+foo.baz(42, 'string'); // throws "Filtrate Error: baz: arguments[1] is not a bool (got: 'string')"
 
 //function usage
 var bar = filtrate(
-  function() {
-    console.log('bar', arguments);
+  function(num, obj, str) {
+    console.log('bar', num, obj, str);
   },
   [Number, {}, String]
 );
 
 bar(21, {a: 42}, "Test"); // executes foo.fn
-bar(21, [a, 42], "Test"); // throws
+bar(21, [{},42], "Test"); // throws "Filtrate Error: arguments[1] is not a plain object (got: [ {}, 42 ])"
+
+
+//programmatic usage
+
+filtrate.compare(
+  { a: String, b: Number, c: Boolean },
+  { a: 'str' , b: 42    , c: false   }
+);
+//returns null
+
+filtrate.compare(
+  { a: String, b: Number, c: Boolean },
+  { a: false , b: '42'  , c: true    }
+);
+//returns "Filtrate Error: undefined.a is not a string (got: false)"

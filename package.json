@@ -1,6 +1,6 @@
 {
   "name": "filtrate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Function argument type checking via filter functions",
   "main": "index.js",
   "directories": {

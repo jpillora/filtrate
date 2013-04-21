@@ -41,16 +41,16 @@ bar(21, [a, 42], "Test"); // throws
 ### Compare Usage
 
 ``` js
-filtrate.compare(String, "Test"); //true
-filtrate.compare(String, 42);     //false
-filtrate.compare([String, Number],   ["Test", 42]); //true
-filtrate.compare([String, Function], ["Test", 42]); //false
+filtrate.compare(String, "Test"); //null
+filtrate.compare(String, 42);     //"Filtrate Error: input is not a string (got: 42)"
+filtrate.compare([String, Number],   ["Test", 42]); //null
+filtrate.compare([String, Function], ["Test", 42]); //"Filtrate Error: input[1] is not a function (got: 42)"
 filtrate.compare(
   { a:String, b:Function },
-  { a:"Test", b:Object.keys }); //true
+  { a:"Test", b:Object.keys }); //null
 filtrate.compare(
   { a:String, b:Function },
-  { a:"Test", b:42 }); //false
+  { a:"Test", b:42 }); //"Filtrate Error: input.b is not a function (got: 42)"
 ```
 
 ### API
@@ -81,7 +81,7 @@ Pattern match, boolean result
 
 `patterns` (`Patterns Object`) - Patterns to match against (see below)
 
-returns *true* or *false*
+returns *null* or *string error message*
 
 
 ### Patterns Object

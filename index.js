@@ -6,10 +6,10 @@ var filtrate = function() {
 
   var method, name, parent, patterns;
   //filtrate self !
-  if(filtrate.compare([Function, true], arguments)) {
+  if(!filtrate.compare([Function, true], arguments)) {
     method = arguments[0];
     patterns = arguments[1];
-  } else if(filtrate.compare([Object, String, true], arguments)) {
+  } else if(!filtrate.compare([Object, String, true], arguments)) {
     parent = arguments[0];
     name = arguments[1];
     patterns = arguments[2];
@@ -19,7 +19,7 @@ var filtrate = function() {
   }
 
   if(!method)
-    throw "Method missing";
+    throw new Error("Method missing");
 
   var path = (parent ? name+': ' : '') + 'arguments';
 
@@ -34,11 +34,11 @@ var filtrate = function() {
 
 filtrate.compare = function(pattern, val) {
   try {
-    check(pattern, val);
+    check(pattern, val, 'input');
   } catch(e) {
-    return false;
+    return e;
   }
-  return true;
+  return null;
 };
 
 //privates
