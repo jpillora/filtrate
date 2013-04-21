@@ -11,7 +11,7 @@ foo.fn(42, true);     // executes foo.fn
 foo.fn(42, 'string'); // throws
 
 //function usage
-var bar = filtrate.fn(
+var bar = filtrate(
   function() {
     console.log('bar', arguments);
   },
