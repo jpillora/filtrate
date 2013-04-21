@@ -27,7 +27,7 @@ foo.fn(42, 'string'); // throws
 Returns a filter function
 
 ``` js
-var bar = filtrate.fn(
+var bar = filtrate(
   function() {
     console.log('bar', arguments);
   },
