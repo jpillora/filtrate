@@ -1,6 +1,6 @@
 {
   "name": "filtrate",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Function argument and JSON schema type checking",
   "main": "index.js",
   "directories": {

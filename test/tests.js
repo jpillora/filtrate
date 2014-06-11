@@ -16,7 +16,7 @@ var makeTest = function(fn, expectedResult, expectedError) {
     if(expectedResult)
       assert.equal(result, expectedResult);
     else
-      assert.equal(error ? error.message : null, expectedError === null ? null : "Filtrate Error: " + expectedError);
+      assert.equal(error ? error.message : null, expectedError === null ? null : expectedError);
   };
 };
 
@@ -83,7 +83,7 @@ describe('filtrate', function(){
         return foo.bar(false, true);
       },
       null,
-      "bar: arguments[0] is not a number (got: false)"
+      "bar:arguments[0] is not a number (got: false)"
     ));
 
     it('should fail II', makeTest(
@@ -91,7 +91,7 @@ describe('filtrate', function(){
         return foo.bar(42, 21);
       },
       null,
-      "bar: arguments[1] is not a bool (got: 21)"
+      "bar:arguments[1] is not a bool (got: 21)"
     ));
 
   });

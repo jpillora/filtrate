@@ -1,7 +1,7 @@
 var _ = require('lodash'),
-    util = require('util');
+    util = require('util'),
+    check;
 
-//privates
 function checkObject(pattern, obj, path) {
   var keys = _.keys(pattern),
       k = null,
@@ -21,19 +21,11 @@ function checkArray(patterns, array, path) {
   return result;
 }
 
-function extractType(pattern) {
-  if(_.isPlainObject(pattern) && pattern.type) {
-    var t = pattern.type;
-    delete pattern.type;
-    return t;
-  }
-  return pattern;
-}
-
 function check(pattern, val, path) {
 
-  var type = pattern;// extractType(pattern),
+  var type = pattern;
   var result = null;
+  if(!path) path = 'input';
 
   //pattern checks (fast first)
   if(type === true && !val)
@@ -66,15 +58,14 @@ function check(pattern, val, path) {
       result = "is not an array";
 
   if(result)
-    return util.format("Filtrate Error: %s %s (got: %s)", path, result, util.inspect(val, false, 1));
+    return util.format("%s %s (got: %s)", path, result, util.inspect(val, false, 1));
 
   //success
   return null;
 }
 
-//public
 function compare(pattern, val) {
-  return !check(pattern, val, 'input');
+  return !check(pattern, val);
 }
 
 function filtrate() {
@@ -97,7 +88,7 @@ function filtrate() {
     throw new Error("Invalid arguments: "+util.inspect(arguments));
   }
 
-  var path = (parent ? name+': ' : '') + 'arguments';
+  var path = (parent ? name+':' : '') + 'arguments';
 
   function filter() {
     var err = check(patterns, arguments, path);
@@ -110,6 +101,7 @@ function filtrate() {
   return filter;
 }
 
+filtrate.check = check;
 filtrate.compare = compare;
 module.exports = filtrate;
 

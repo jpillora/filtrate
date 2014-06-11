@@ -1,15 +1,29 @@
 filtrate
 ========
 
-Function argument type checking for Node.js
+Function argument and JSON schema type checking for Node.js
 
 ```
 npm install filtrate
 ```
 
-### Method Usage
+### Usage
 
-Adds a filter function in-place
+Wrap a function
+
+``` js
+var bar = filtrate(
+  [Number, {}, String],
+  function() {
+    console.log('bar', arguments);
+  }
+);
+
+bar(21, {a: 42}, "Test"); // executes foo.fn
+bar(21, [a, 42], "Test"); // throws!
+```
+
+Modify an object method
 
 ``` js
 var foo = {
@@ -21,51 +35,42 @@ var foo = {
 filtrate(foo, 'fn', [Number, Boolean]);
 
 foo.fn(42, true);     // executes foo.fn
-foo.fn(42, 'string'); // throws
+foo.fn(42, 'string'); // throws!
 ```
 
-### Function Usage
-
-Returns a filter function
+Compare a pattern against a value
 
 ``` js
-var bar = filtrate(
-  [Number, {}, String],
-  function() {
-    console.log('bar', arguments);
-  }
-);
-
-bar(21, {a: 42}, "Test"); // executes foo.fn
-bar(21, [a, 42], "Test"); // throws
+filtrate.compare(String, "Test"); //true
+filtrate.compare(String, 42);     //false
+filtrate.compare([String, Number],   ["Test", 42]); //true
+filtrate.compare([String, Function], ["Test", 42]); //false
+filtrate.compare(
+  { a:String, b:Function },
+  { a:"Test", b:Object.keys }); //false
+filtrate.compare(
+  { a:String, b:Function },
+  { a:"Test", b:42 }); //false
 ```
 
-### Compare Usage
+Compare a pattern against a value with a helpful message
 
 ``` js
-filtrate.compare(String, "Test"); //null
-filtrate.compare(String, 42);     //"Filtrate Error: input is not a string (got: 42)"
-filtrate.compare([String, Number],   ["Test", 42]); //null
-filtrate.compare([String, Function], ["Test", 42]); //"Filtrate Error: input[1] is not a function (got: 42)"
-filtrate.compare(
-  { a:String, b:Function },
-  { a:"Test", b:Object.keys }); //null
-filtrate.compare(
-  { a:String, b:Function },
-  { a:"Test", b:42 }); //"Filtrate Error: input.b is not a function (got: 42)"
+filtrate.check([String, Number],   ["Test", 42]); //null
+filtrate.check([String, Function], ["Test", 42]); //"Filtrate Error: input[1] is not a function (got: 42)"
 ```
 
 ### API
 
-#### filtrate(`function`, `patterns`);
+#### filtrate(`patterns`, `function`);
 
-  Wrap function
+  Wrap a function
 
   `patterns` (`Patterns Object`) - Patterns to match against (see below)
 
   `function` (`Function`) - The function to be filtered
 
-returns *filtered function*
+  returns *filtered function*
 
 #### filtrate(`object`, `methodName`, `patterns`);
 
@@ -90,9 +95,15 @@ returns *filtered function*
   returns `true`/`false`
 
 
+#### filtrate.check(`patterns`, `input`);
+  
+  Pattern match, string result
+
+---
+
 ### Patterns Object
 
-The patterns object is recursively defined as:
+A `patterns` object is recursively defined as:
 
 ```
   patterns =
@@ -104,6 +115,7 @@ The patterns object is recursively defined as:
     Function  ||                
     Array     ||               
     Object    ||               
+    undefined ||               
     [patterns, ...] ||             
     {key: patterns, ... }
 ```
