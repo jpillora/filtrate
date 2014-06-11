@@ -1,7 +1,7 @@
 {
   "name": "filtrate",
-  "version": "0.0.2",
-  "description": "Function argument type checking via filter functions",
+  "version": "0.1.0",
+  "description": "Function argument and JSON schema type checking",
   "main": "index.js",
   "directories": {
     "example": "example"
@@ -14,14 +14,19 @@
     "url": "https://jpillora@github.com/jpillora/filtrate.git"
   },
   "keywords": [
-    "type"
+    "type",
+    "check",
+    "filter",
+    "filtrate",
+    "json",
+    "schema"
   ],
   "author": "Jaime Pillora",
   "license": "MIT",
   "dependencies": {
-    "lodash": "~1.1.1"
+    "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "mocha": "~1.9.0"
+    "mocha": "^1.20.1"
   }
 }

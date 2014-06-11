@@ -1,51 +1,39 @@
 var _ = require('lodash'),
     util = require('util');
 
-//publics
-var filtrate = function() {
-
-  var method, name, parent, patterns;
-  //filtrate self !
-  if(!filtrate.compare([Function, true], arguments)) {
-    method = arguments[0];
-    patterns = arguments[1];
-  } else if(!filtrate.compare([Object, String, true], arguments)) {
-    parent = arguments[0];
-    name = arguments[1];
-    patterns = arguments[2];
-    method = parent[name];
-  } else {
-    throw "Invalid arguments";
-  }
-
-  if(!method)
-    throw new Error("Method missing");
-
-  var path = (parent ? name+': ' : '') + 'arguments';
-
-  var filter = function() {
-    check(patterns, arguments, path);
-    return method.apply(this, arguments);
-  };
-
-  if(parent) parent[name] = filter;
-  return filter;
-};
-
-filtrate.compare = function(pattern, val) {
-  try {
-    check(pattern, val, 'input');
-  } catch(e) {
-    return e;
-  }
-  return null;
-};
-
 //privates
-var check = function(pattern, val, path) {
-
-  var type = extractType(pattern),
+function checkObject(pattern, obj, path) {
+  var keys = _.keys(pattern),
+      k = null,
       result = null;
+  for(var i = 0; result === null && i < keys.length; i++) {
+    k = keys[i];
+    result = check(pattern[k], obj[k], path+'.'+k);
+  }
+  return result;
+}
+
+function checkArray(patterns, array, path) {
+  var result = null;
+  for(var i = 0; result === null && i < patterns.length; i++) {
+    result = check(patterns[i], array[i], path +'['+i+']');
+  }
+  return result;
+}
+
+function extractType(pattern) {
+  if(_.isPlainObject(pattern) && pattern.type) {
+    var t = pattern.type;
+    delete pattern.type;
+    return t;
+  }
+  return pattern;
+}
+
+function check(pattern, val, path) {
+
+  var type = pattern;// extractType(pattern),
+  var result = null;
 
   //pattern checks (fast first)
   if(type === true && !val)
@@ -65,59 +53,64 @@ var check = function(pattern, val, path) {
   else if(type === Object && !_.isObject(val))
       result = "is not an object";
   else if(_.isPlainObject(type))
-    if(_.isPlainObject(val))
+    if(_.isPlainObject(val)) {
       result = checkObject(type, val, path);
-    else
+      if(result) return result;
+    } else
       result = "is not a plain object";
   else if(_.isArray(type))
-    if(_.isArray(val) || _.isArguments(val))
+    if(_.isArray(val) || _.isArguments(val)) {
       result = checkArray(type, val, path);
-    else
+      if(result) return result;
+    } else
       result = "is not an array";
 
-  //throw on first error
-  if(_.isString(result))
-    throw "Filtrate Error: " +
-          path + ' ' +
-          result + ' (got: ' +
-          util.inspect(val, false, 1) +
-          ')';
+  if(result)
+    return util.format("Filtrate Error: %s %s (got: %s)", path, result, util.inspect(val, false, 1));
 
   //success
-  return result;
-};
-
-var checkObject = function(pattern, obj, path) {
-  var keys = _.keys(pattern),
-      k = null,
-      result = null;
-  for(var i = 0; i < keys.length; i++) {
-    k = keys[i];
-    result = check(pattern[k], obj[k], path+'.'+k);
-    if(result !== null)
-      return result;
-  }
   return null;
-};
+}
 
-var checkArray = function(patterns, array, path) {
-  var result = null;
-  for(var i = 0; i < patterns.length; i++) {
-    result = check(patterns[i], array[i], path +'['+i+']');
-    if(result !== null) break;
+//public
+function compare(pattern, val) {
+  return !check(pattern, val, 'input');
+}
+
+function filtrate() {
+
+  var method, name, parent, patterns;
+  //filtrate self !
+  if(compare([true, Function], arguments)) {
+    patterns = arguments[0];
+    method = arguments[1];
+  } else if(compare([Object, String, true], arguments)) {
+    parent = arguments[0];
+    name = arguments[1];
+    patterns = arguments[2];
+    method = parent[name];
+    if(!method)
+      throw new Error("Method missing");
+  } else if(arguments.length === 2) {
+    return compare(arguments[0], arguments[1]);
+  } else {
+    throw new Error("Invalid arguments: "+util.inspect(arguments));
   }
-  return result;
-};
 
-var extractType = function(pattern) {
-  if(_.isPlainObject(pattern) && pattern.type) {
-    var t = pattern.type;
-    delete pattern.type;
-    return t;
+  var path = (parent ? name+': ' : '') + 'arguments';
+
+  function filter() {
+    var err = check(patterns, arguments, path);
+    if(err)
+      throw new TypeError(err);
+    return method.apply(this, arguments);
   }
-  return pattern;
-};
 
+  if(parent) parent[name] = filter;
+  return filter;
+}
+
+filtrate.compare = compare;
 module.exports = filtrate;
 
 

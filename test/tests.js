@@ -16,10 +16,7 @@ var makeTest = function(fn, expectedResult, expectedError) {
     if(expectedResult)
       assert.equal(result, expectedResult);
     else
-      assert.equal(error,
-        expectedError === null ? null :
-          "Filtrate Error: " + expectedError
-      );
+      assert.equal(error ? error.message : null, expectedError === null ? null : "Filtrate Error: " + expectedError);
   };
 };
 
@@ -29,9 +26,12 @@ describe('filtrate', function(){
   describe('1. plain function', function(){
 
     //mock object
-    var fn = filtrate(function() {
-      return 9;
-    }, [Array, Number]);
+    var fn = filtrate(
+      [Array, Number],
+      function(arr, num) {
+        return 9;
+      }
+    );
 
     it('should pass', makeTest(
       function(){
@@ -63,10 +63,10 @@ describe('filtrate', function(){
 
     //mock object
     var foo = {
-          bar: function() {
-            return 7;
-          }
-        };
+      bar: function() {
+        return 7;
+      }
+    };
 
     filtrate(foo, 'bar', [Number, Boolean]);
 
@@ -99,11 +99,12 @@ describe('filtrate', function(){
   describe('3. object compare', function(){
 
     //mock object
-    var fn = filtrate(function() {
-              return 7;
-             }, [
-              {a:Number, b: { c: Boolean }}
-             ]);
+    var fn = filtrate(
+      [{a:Number, b: { c: Boolean }}],
+      function(obj) {
+        return 7;
+      }
+    );
 
     it('should pass', makeTest(
       function(){
@@ -125,45 +126,44 @@ describe('filtrate', function(){
 
   describe('4. type checks', function(){
 
-    var cmp = filtrate.compare;
 
     it('truthy/falsy', function() {
-
       var test = function(b) {
-        assert.equal(b, !cmp(b, 1));
-        assert.equal(b, !cmp(b, [1]));
-        assert.equal(b, !cmp(b, {a:1}));
-        assert.equal(!b, !cmp(b, 0));
-        assert.equal(!b, !cmp(b, undefined));
-        assert.equal(!b, !cmp(b, null));
+        assert.equal(b,  filtrate(b, 1));
+        assert.equal(b,  filtrate(b, [1]));
+        assert.equal(b,  filtrate(b, {a:1}));
+        assert.equal(!b, filtrate(b, 0));
+        assert.equal(!b, filtrate(b, undefined));
+        assert.equal(!b, filtrate(b, null));
       };
       test(true);
       test(false);
     });
 
     it('string', function() {
-      assert.equal(true, !cmp(String, '1'));
-      assert.equal(false, !cmp(String, 42));
+      assert.equal(true, filtrate(String, '1'));
+      assert.equal(false, filtrate(String, 42));
     });
 
     it('number', function() {
-      assert.equal(false, !cmp(Number, '1'));
-      assert.equal(true, !cmp(Number, 42));
+      assert.equal(false, filtrate(Number, '1'));
+      assert.equal(true, filtrate(Number, 42));
     });
 
     it('function', function() {
-      assert.equal(true, !cmp(Function, function() {}));
-      assert.equal(true, !cmp(Function, Object.keys));
+      assert.equal(true, filtrate.compare(Function, function noop(){}));
+      assert.equal(true, filtrate.compare(Function, Object.keys));
+      assert.equal(false, filtrate.compare(Function, [].length));
     });
 
     it('object', function() {
-      assert.equal(true, !cmp(Object, {}));
-      assert.equal(true, !cmp(Object, []));
+      assert.equal(true, filtrate(Object, {}));
+      assert.equal(true, filtrate(Object, []));
     });
 
     it('plain object', function() {
-      assert.equal(true, !cmp({}, {a:42}));
-      assert.equal(false, !cmp({}, []));
+      assert.equal(true, filtrate({}, {a:42}));
+      assert.equal(false, filtrate({}, []));
     });
 
   });

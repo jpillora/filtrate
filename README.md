@@ -3,7 +3,9 @@ filtrate
 
 Function argument type checking for Node.js
 
-`npm install filtrate`
+```
+npm install filtrate
+```
 
 ### Method Usage
 
@@ -28,10 +30,10 @@ Returns a filter function
 
 ``` js
 var bar = filtrate(
+  [Number, {}, String],
   function() {
     console.log('bar', arguments);
-  },
-  [Number, {}, String]
+  }
 );
 
 bar(21, {a: 42}, "Test"); // executes foo.fn
@@ -55,38 +57,42 @@ filtrate.compare(
 
 ### API
 
-#### filtrate(`parent`, `methodName`, `patterns`);
-
-`parent` (`Object`) - Parent object containing the method
-
-`methodName` (`String`) - Name of the method
-
-`patterns` (`Patterns Object`) - Patterns to match against (see below)
-
-returns *`undefined`*
-
 #### filtrate(`function`, `patterns`);
 
-`function` (`Function`) - The function to be filtered
+  Wrap function
 
-`patterns` (`Patterns Object`) - Patterns to match against (see below)
+  `patterns` (`Patterns Object`) - Patterns to match against (see below)
+
+  `function` (`Function`) - The function to be filtered
 
 returns *filtered function*
 
-#### filtrate.compare(`input`, `patterns`);
+#### filtrate(`object`, `methodName`, `patterns`);
 
-Pattern match, boolean result
+  Modify object method
 
-`input` (`Function`) - An object to match
+  `object` (`Object`) - Parent object containing the method
 
-`patterns` (`Patterns Object`) - Patterns to match against (see below)
+  `methodName` (`String`) - Name of the method
 
-returns *null* or *string error message*
+  `patterns` (`Patterns Object`) - Patterns to match against (see below)
+
+  returns *`undefined`*
+
+#### filtrate.compare(`patterns`, `input`);
+
+  Pattern match, boolean result
+
+  `input` (`Function`) - An object to match
+
+  `patterns` (`Patterns Object`) - Patterns to match against (see below)
+
+  returns `true`/`false`
 
 
 ### Patterns Object
 
-The patterns object can be recursively defined as:
+The patterns object is recursively defined as:
 
 ```
   patterns =
@@ -106,17 +112,9 @@ The patterns object can be recursively defined as:
 
 `false` is a falsy comparison
 
-`String` and
+`String`, `Number`, `Boolean`, `Function`, `Array` and `Object` are all essentially `typeof` comparisons
 
-`Number` and
-       
-`Boolean` and
-             
-`Function` and
-                   
-`Array` and
-                      
-`Object` are all essentially `typeof` comparisons
+`undefined` skips comparison
 
 `[]` does a recursive comparison of these types listed
 
